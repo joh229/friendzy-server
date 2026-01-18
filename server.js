@@ -5,14 +5,19 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
 
+
+
 // Load .env from server folder
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 
 // Routes
 const postRoutes = require("./routes/post");
 const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/user");
+const storyRoutes = require("./routes/story");
 
 const app = express();
+
 
 /* ================= Middleware ================= */
 app.use(cors());
@@ -26,6 +31,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 /* ================= Routes ================= */
 app.use("/api/posts", postRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/users",userRoutes);
+app.use("/api/stories",storyRoutes)
 
 /* ================= Debug ================= */
 console.log("MONGODB_URI =", process.env.MONGODB_URI);

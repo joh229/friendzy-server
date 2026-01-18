@@ -183,9 +183,10 @@ exports.followUser = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    if (!user.following.includes(targetId)) {
+    if (!user.following.some(id => id.toString() === targetId)) {
       user.following.push(targetId);
       targetUser.followers.push(userId);
+
       await user.save();
       await targetUser.save();
     }

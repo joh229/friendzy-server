@@ -4,16 +4,6 @@ const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("./cloudinary");
 
-/*
-  We use one upload system for:
-  1. Post images  -> folder: posts
-  2. Profile pics -> folder: profiles
-
-  The folder is selected dynamically based on the field name:
-  - image       → posts
-  - profilePic  → profiles
-*/
-
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
@@ -29,7 +19,11 @@ const storage = new CloudinaryStorage({
 
     return {
       folder: folder,
-      allowed_formats: ["jpg", "jpeg", "png", "webp"],
+      resource_type: "auto",   // 🔥 allow images + videos automatically
+      allowed_formats: [
+        "jpg", "jpeg", "png", "webp",
+        "mp4", "mov", "avi", "mkv", "webm"
+      ],
       public_id: `${Date.now()}-${file.originalname.split(".")[0]}`,
     };
   },
@@ -38,13 +32,26 @@ const storage = new CloudinaryStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5 MB limit
+    fileSize: 50 * 1024 * 1024,   // 🔥 50MB for videos
   },
   fileFilter: (req, file, cb) => {
-    const allowed = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+    const allowed = [
+      // Images
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "image/webp",
+
+      // Videos
+      "video/mp4",
+      "video/quicktime",
+      "video/x-msvideo",
+      "video/x-matroska",
+      "video/webm",
+    ];
 
     if (!allowed.includes(file.mimetype)) {
-      cb(new Error("Only JPG, PNG, JPEG, WEBP images are allowed"), false);
+      cb(new Error("Only images and videos are allowed"), false);
     } else {
       cb(null, true);
     }

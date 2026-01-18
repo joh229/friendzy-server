@@ -17,13 +17,16 @@ if (!userId || !username) {
   });  
 }  
 
-let image = { url: "", public_id: "" };  
-if (req.file) {  
-  image = {  
-    url: req.file.path,  
-    public_id: req.file.filename,  
-  };  
-}  
+ 
+let image = null;
+
+if (req.file) {
+  image = {
+    url: req.file.path,
+    public_id: req.file.filename,
+    resource_type: req.file.resource_type, // 🔥 REQUIRED FOR VIDEO
+  };
+}
 
 const post = new Post({  
   userId: String(userId),  
